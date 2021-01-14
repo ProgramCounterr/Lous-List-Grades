@@ -8,7 +8,7 @@
             "matches": [
                 "*://louslist.org/page.php?Semester=*&Type=Group&Group=*"
             ],
-            "js": ["content.js"]
+            "js": ["Chart.js", "content.js"]
         }
     ],
     "background": {
