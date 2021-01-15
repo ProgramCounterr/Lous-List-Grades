@@ -16,22 +16,14 @@ for(courseNameElement of courseNameElements) {
             .previousElementSibling.textContent.replace(' ', '').trim();
         const chartRowElement = (e.target).parentElement.parentElement // course row (that contains courseNum and courseName elements)
             .nextElementSibling.nextElementSibling;
-
-        if(!chartRowElement.firstElementChild) { // check if chart already exists
-            const canvasElement = document.createElement('canvas');
-            canvasElement.setAttribute('id', courseNum);
-
-            const chartContainerElement = document.createElement('td');
-            chartContainerElement.classList.add('chart-container');
-            chartContainerElement.style.cssText = "position: relative; height: 20px; width: 200px;";
-            chartContainerElement.appendChild(canvasElement);
-            
-            chartRowElement.appendChild(chartContainerElement);
-        }
         
         if(showGradesButton.textContent === "Show Grades") {
             showGradesButton.textContent = "Hide Grades";
-
+            if(!chartRowElement.firstElementChild) {// if chart has not been rendered yet
+                chartRowElement.textContent = "Loading grade data..."; // change just the plain text in the row element
+            }
+            chartRowElement.style.display = "block";
+            
             //TODO: check if course is in storage
              // course not cached
                 // FIXME: Error 429 Too Many Requests
@@ -49,9 +41,8 @@ for(courseNameElement of courseNameElements) {
                 //     });
                 
 
-                // REMOVE: for development purposes only (limit API calls)
+            // REMOVE: for development purposes only (limit API calls)
 
-            chartRowElement.style.display = "block";
 
             const gradeLabels = {
                 'A+': 4.0, 'A':4.0, 'A-':3.7, 
@@ -73,8 +64,22 @@ for(courseNameElement of courseNameElements) {
             let sectionNum = 0;
             fetchCourseJSON(courseNum).then(course => {
                 if(course.sections.length > 0) {
-                    chartRowElement.firstElementChild.style.height = "40vh";
-                    chartRowElement.firstElementChild.style.width = "40vw";
+                    chartRowElement.childNodes[0].nodeValue = ""; // just change plain text - setting textContent would remove child nodes
+
+                    if(!chartRowElement.firstElementChild) { // check that chart doesn't already exists
+                        //create canvas element
+                        const canvasElement = document.createElement('canvas');
+                        canvasElement.setAttribute('id', courseNum);
+                        // create responsive container element
+                        const chartContainerElement = document.createElement('td');
+                        chartContainerElement.classList.add('chart-container');
+                        chartContainerElement.style.cssText = "position: relative; height: 20px; width: 200px;";
+                        chartContainerElement.style.height = "40vh";
+                        chartContainerElement.style.width = "40vw";
+                        // append elements
+                        chartContainerElement.appendChild(canvasElement);
+                        chartRowElement.appendChild(chartContainerElement);
+                    }
                     
                     let section = course.sections[sectionNum];
                     let sectionGradeDistr = (() => { // get grade distribution and gpa
@@ -126,12 +131,12 @@ for(courseNameElement of courseNameElements) {
 
                 }
                 else {
-                    chartRowElement.firstElementChild.textContent = 'No data for this course available';
+                    chartRowElement.textContent = 'No data for this course available';
                 }
             })
             .catch((error) => {
                 console.error('Error:', error);
-                chartRowElement.firstElementChild.textContent = 'No data available for this class';
+                chartRowElement.textContent = 'No data available for this class';
             });
             
         }
