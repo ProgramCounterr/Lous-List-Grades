@@ -1,5 +1,3 @@
-console.log("LousListGrades' content script is running!"); // DEBUGGING
-
 const courseNameElements = document.querySelectorAll('td.CourseName'); // returns an array of td elements
 
 // TODO: add some type of storage
@@ -44,7 +42,6 @@ for(courseNameElement of courseNameElements) {
 
             // REMOVE: for development purposes only (limit API calls)
 
-
             const gradeLabels = {
                 'A+': 4.0, 'A':4.0, 'A-':3.7, 
                 'B+': 3.3, 'B': 3.0, 'B-': 2.7, 
@@ -62,36 +59,13 @@ for(courseNameElement of courseNameElements) {
                     throw new Error('ERROR:', response.statusText);
                 }
             }
-            let sectionNum = 0;
+
             fetchCourseJSON(courseNum).then(course => {
                 if(course.sections.length > 0) {
                     chartRowElement.childNodes[0].nodeValue = ""; // just change plain text - setting textContent would remove child nodes
-
-                    if(!chartRowElement.firstElementChild) { // check that chart doesn't already exists
-                        //create canvas element
-                        const canvasElement = document.createElement('canvas');
-                        canvasElement.setAttribute('id', courseNum);
-                        // create responsive container for chart element
-                        const chartContainerElement = document.createElement('td');
-                        chartContainerElement.classList.add('chart-container');
-                        // append elements
-                        chartContainerElement.appendChild(canvasElement);
-                        chartRowElement.appendChild(chartContainerElement);
-                        // create select element next to chart container
-                        const selectContainerElement = document.createElement('td');
-                        const select = document.createElement('select');
-                        select.classList.add('section-picker');
-                        for(let section of course.sections) {
-                            const option = document.createElement('option');
-                            option.textContent = section.semester + ' Section ' + section.section + 
-                                ' ' + section.instructor;
-                            select.appendChild(option);
-                        }
-                        selectContainerElement.appendChild(select);
-                        chartRowElement.appendChild(selectContainerElement);
-                    }
                     
-                    let section = course.sections[sectionNum];
+                    // get section data from course object
+                    let section = course.sections[course.sections.length-1];
                     let sectionGradeDistr = (() => { // get grade distribution and gpa
                         let gpa = 0;
                         let totalCount = 0;
@@ -110,48 +84,35 @@ for(courseNameElement of courseNameElements) {
                         return {'gpa': gpa, 'distr': gradeDistr};
                     })();
 
-                    const ctx = document.getElementById(courseNum).getContext('2d');
-                    let myChart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: Object.keys(gradeLabels),
-                            datasets: [{
-                                label: 'count', 
-                                data: sectionGradeDistr.distr,
-                                backgroundColor: [...Object.keys(gradeLabels)].fill('rgb(130, 202, 157)'), // make all bars green
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            title: {
-                                display: true,
-                                text: 'GPA: ' + sectionGradeDistr.gpa,
-                                fontSize: 26
-                            },
-                            maintainAspectRatio: false,
-                            scales: {
-                                yAxes: [{
-                                    ticks: {
-                                        beginAtZero: true
-                                    }
-                                }]
-                            }
+                    if(!chartRowElement.firstElementChild) { // check that chart doesn't already exists
+                        makeBarChart(courseNum, document.createElement('td'), chartRowElement, 
+                            Object.keys(gradeLabels), sectionGradeDistr.distr, 'GPA: ' + sectionGradeDistr.gpa);
+                        // create select element next to chart container
+                        const selectContainerElement = document.createElement('td');
+                        const select = document.createElement('select');
+                        select.classList.add('section-picker');
+                        for(let section of course.sections) {
+                            const option = document.createElement('option');
+                            option.textContent = section.semester + ' Section ' + section.section + 
+                                ' ' + section.instructor;
+                            select.appendChild(option);
                         }
-                    });
-
-                }
-                else {
+                        selectContainerElement.appendChild(select);
+                        chartRowElement.appendChild(selectContainerElement);
+                    }
+                } 
+                else { // course object has no sections
                     chartRowElement.textContent = 'No data for this course available';
                 }
             })
             .catch((error) => {
                 console.error('Error:', error);
-                chartRowElement.textContent = 'No data available for this class';
+                chartRowElement.textContent = 'Unable to retrieve data for this class';
             });
             
         }
 
-        else if(showGradesButton.textContent === "Hide Grades") {
+        else if(showGradesButton.textContent === "Hide Grades") { // if chart is already showing
             showGradesButton.textContent = "Show Grades";
             // hide the chart
             chartRowElement.style.display = "none";
