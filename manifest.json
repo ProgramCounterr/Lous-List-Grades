@@ -8,11 +8,12 @@
             "matches": [
                 "*://louslist.org/page.php?Semester=*&Type=Group&Group=*"
             ],
-            "js": ["Chart.js", "content.js"]
+            "css": ["style.css"],
+            "js": ["scripts/Chart.js", "scripts/content.js"]
         }
     ],
     "background": {
-        "scripts": ["background.js"],
+        "scripts": ["scripts/background.js"],
         "persistent": false
     },
     "page_action": {

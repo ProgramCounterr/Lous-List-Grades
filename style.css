@@ -1,0 +1,14 @@
+button.show-grades {
+    float: right;
+    cursor: pointer;
+}
+
+td.chart-container {
+    position: relative;
+    height: 40vh;
+    width: 40vw;
+}
+
+select.section-picker {
+    width: 35vw;
+}
