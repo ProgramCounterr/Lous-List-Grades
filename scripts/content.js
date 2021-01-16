@@ -66,8 +66,10 @@ for(courseNameElement of courseNameElements) {
                                     totalCount += section[letter];
                                 }
                             }
-                    
-                            gpa /= totalCount;
+                            if(totalCount === 0)
+                                gpa = 0;
+                            else
+                                gpa /= totalCount;
                             gpa = Math.round((gpa + Number.EPSILON) * 100) / 100; // round to 2 decimal places (if necessary)
                     
                             return {'gpa': gpa, 'distr': gradeDistr};
