@@ -1,7 +1,5 @@
 const courseNameElements = document.querySelectorAll('td.CourseName'); // returns an array of td elements
 
-// TODO: add some type of storage
-
 
 for(courseNameElement of courseNameElements) {
     // add a button to each course that will show grades when clicked
@@ -26,22 +24,7 @@ for(courseNameElement of courseNameElements) {
                 rowElement.appendChild(cell);
                 cell.textContent = "Loading grade data..."; // change just the plain text in the row element
             
-                //TODO: check if course is in storage
-                // course not cached
-                    // FIXME: Error 429 Too Many Requests
-                    // fetch(`https://cors-anywhere.herokuapp.com/https://vagrades.com/api/uvaclass/${courseNum}`)
-                    //     .then(response => {
-                    //         if(response.ok)
-                    //             return response.json();
-                    //         else
-                    //             throw new Error('Something went wrong');
-                    //     })
-                    //     .then(data => {
-                    //         course = data;
-                    //         download(data, 'json.txt', 'text/plain');
-                    //         courses[courseNum] = course;
-                    //     });
-                    
+                //TODO: add some type of storage/caching
 
                 // REMOVE: for development purposes only (limit API calls)
 
@@ -54,7 +37,10 @@ for(courseNameElement of courseNameElements) {
                 };
 
                 async function fetchCourseJSON(courseNum) {
-                    const response = await fetch(`http://localhost/projects/lous-list-grades/${courseNum}.php`);
+                    // FIXME: Error 429 Too Many Requests
+                    // fetch(`https://cors-anywhere.herokuapp.com/https://vagrades.com/api/uvaclass/${courseNum}`);
+                    const response = await fetch(`https://cors-anywhere.herokuapp.com/https://vagrades.com/api/uvaclass/${courseNum}`);
+                    //const response = await fetch(`http://localhost/projects/lous-list-grades/${courseNum}.php`);
                     if(response.ok) {
                         const course = await response.json();
                         return course;
@@ -69,7 +55,7 @@ for(courseNameElement of courseNameElements) {
                         
                         // get section data from course object
                         let section = course.sections[course.sections.length-1];
-                        let sectionGradeDistr = (() => { // get grade distribution and gpa
+                        function getGradeDistr(section) { // get grade distribution and gpa
                             let gpa = 0;
                             let totalCount = 0;
                             let gradeDistr = [];
@@ -85,7 +71,15 @@ for(courseNameElement of courseNameElements) {
                             gpa = Math.round((gpa + Number.EPSILON) * 100) / 100; // round to 2 decimal places (if necessary)
                     
                             return {'gpa': gpa, 'distr': gradeDistr};
-                        })();
+                        }
+                        let sectionGradeDistr = getGradeDistr(section);
+
+                        // setup chart
+                        const chartContainerElement = document.createElement('td');
+                        chartContainerElement.setAttribute('colspan', '4');
+                        // make chart element and append to chartContainerElement
+                        let chart = makeBarChart(courseNum, chartContainerElement, 
+                            Object.keys(gradeLabels), sectionGradeDistr.distr, `Section GPA: ${sectionGradeDistr.gpa}`);
 
                         // create the select element next to the chart container
                         const selectContainerElement = document.createElement('td');
@@ -114,16 +108,22 @@ for(courseNameElement of courseNameElements) {
                         }
                         // have last section selected by default
                         selectElement.children[selectElement.children.length-1].selected = true;
+                        // add event listener to update graph when new option is chosen
+                        selectElement.addEventListener('change', () => {
+                            let index = selectElement.selectedIndex;
+                            // add new data to chart
+                            let newSection = course.sections[index];
+                            let newGradeDistr = getGradeDistr(newSection);
+                            chart.data.datasets.forEach((dataset) => dataset.data = newGradeDistr.distr);
+                            //console.log('After adding:', chart.data.datasets);
+                            chart.options.title.text = `Section GPA: ${newGradeDistr.gpa}`;
+                            chart.update();
+                        });
+
                         // append
                         selectContainerElement.appendChild(selectElement);
                         rowElement.appendChild(selectContainerElement);
-
-                        // setup chart
-                        const chartContainerElement = document.createElement('td');
-                        chartContainerElement.setAttribute('colspan', '4');
-                        // make chart element and append to rowElement
-                        makeBarChart(courseNum, chartContainerElement, rowElement, 
-                        Object.keys(gradeLabels), sectionGradeDistr.distr, `GPA: ${sectionGradeDistr.gpa}`);
+                        rowElement.appendChild(chartContainerElement);
 
                     } 
                     else { // course object has no sections

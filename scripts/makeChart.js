@@ -1,4 +1,4 @@
-function makeBarChart(canvasID, chartContainerElement, parentElement, labels, data, title) {
+function makeBarChart(canvasID, chartContainerElement, labels, data, title) {
     //create canvas element
     const canvasElement = document.createElement('canvas');
     canvasElement.setAttribute('id', canvasID);
@@ -6,7 +6,6 @@ function makeBarChart(canvasID, chartContainerElement, parentElement, labels, da
     chartContainerElement.classList.add('chart-container');
     
     chartContainerElement.appendChild(canvasElement);
-    parentElement.appendChild(chartContainerElement);
 
     const ctx = canvasElement.getContext('2d');
     let myChart = new Chart(ctx, {
@@ -29,4 +28,6 @@ function makeBarChart(canvasID, chartContainerElement, parentElement, labels, da
             maintainAspectRatio: false
         }
     });
+
+    return myChart;
 }
