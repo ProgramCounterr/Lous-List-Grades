@@ -8,6 +8,9 @@ td.chart-container {
     height: 40vh;
     width: 25vw;
 }
+canvas {
+    min-height: 300px;
+}
 
 select.section-picker {
     appearance: none;
