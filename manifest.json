@@ -3,13 +3,14 @@
     "name": "Lou's List Grades",
     "version": "0.1", 
     "description": "View available grade data (from VA Grades) for classes on Lou's List",
+    "permissions": ["declarativeContent"],
     "content_scripts": [
         {
             "matches": [
                 "*://louslist.org/page.php?Semester=*&Type=Group&Group=*"
             ],
             "css": ["style.css"],
-            "js": ["scripts/Chart.js", "scripts/makeChart.js", "scripts/content.js"]
+            "js": ["libraries/Chart.js", "scripts/makeChart.js", "scripts/content.js"]
         }
     ],
     "background": {
@@ -19,17 +20,19 @@
     "page_action": {
         "default_popup": "popup.html",
         "default_icon": {
-            "16": "images/get_started16.png",
-            "32": "images/get_started32.png",
-            "48": "images/get_started48.png",
-            "128": "images/get_started128.png"
+            "16": "icons/bar-chart16.png",
+            "24": "icons/bar-chart24.png",
+            "32": "icons/bar-chart32.png",
+            "64": "icons/bar-chart64.png",
+            "128": "icons/bar-chart128.png"
         }
     },
     "icons": {
-        "16": "images/get_started16.png",
-        "32": "images/get_started32.png",
-        "48": "images/get_started48.png",
-        "128": "images/get_started128.png"
+        "16": "icons/bar-chart16.png",
+        "24": "icons/bar-chart24.png",
+        "32": "icons/bar-chart32.png",
+        "64": "icons/bar-chart64.png",
+        "128": "icons/bar-chart128.png"
     }
 
 }
