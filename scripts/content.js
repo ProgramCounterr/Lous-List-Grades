@@ -36,20 +36,16 @@ for(courseNameElement of courseNameElements) {
                     'DR': 0.0, 'F': 0.0, 'W': 0.0
                 };
 
-                async function fetchCourseJSON(courseNum) {
-                    // FIXME: Error 429 Too Many Requests
-                    // fetch(`https://cors-anywhere.herokuapp.com/https://vagrades.com/api/uvaclass/${courseNum}`);
-                    const response = await fetch(`https://cors-anywhere.herokuapp.com/https://vagrades.com/api/uvaclass/${courseNum}`);
-                    //const response = await fetch(`http://localhost/projects/lous-list-grades/${courseNum}.php`);
-                    if(response.ok) {
-                        const course = await response.json();
-                        return course;
-                    }
-                    else {
-                        throw new Error('ERROR:', response.statusText);
-                    }
-                }
-                fetchCourseJSON(courseNum).then(course => {
+                fetch(`https://cors-anywhere.herokuapp.com/https://vagrades.com/api/uvaclass/${courseNum}`)
+                .then(response => {
+                        if(response.ok) {
+                            return response.json();
+                        }
+                        else {
+                            throw new Error('ERROR:', response.statusText);
+                        }
+                })
+                .then(course => {
                     if(course.sections.length > 0) {
                         rowElement.textContent = ""; // remove child nodes
                         
