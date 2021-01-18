@@ -36,7 +36,7 @@ for(courseNameElement of courseNameElements) {
                     'DR': 0.0, 'F': 0.0, 'W': 0.0
                 };
 
-                fetch(`https://cors-anywhere.herokuapp.com/https://vagrades.com/api/uvaclass/${courseNum}`)
+                fetch(`https://api.allorigins.win/raw?url=https://vagrades.com/api/uvaclass/${courseNum}`)
                 .then(response => {
                         if(response.ok) {
                             return response.json();
