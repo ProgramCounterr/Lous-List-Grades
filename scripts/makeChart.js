@@ -8,6 +8,14 @@ function makeBarChart(canvasID, chartContainerElement, labels, data, title) {
     chartContainerElement.appendChild(canvasElement);
 
     const ctx = canvasElement.getContext('2d');
+    // set y-axis default values
+    Chart.scaleService.updateScaleDefaults('linear', {
+        ticks: {
+            min: 0,
+            precision: 0
+        }
+    });
+    // create chart
     let myChart = new Chart(ctx, {
         type: 'bar',
         data: {
