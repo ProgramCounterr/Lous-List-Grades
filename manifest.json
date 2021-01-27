@@ -3,7 +3,7 @@
     "name": "Lou's List Grades",
     "version": "0.1", 
     "description": "View available grade data (from VA Grades) for classes on Lou's List",
-    "permissions": ["declarativeContent"],
+    "permissions": ["declarativeContent", "https://vagrades.com/"],
     "content_scripts": [
         {
             "matches": [
