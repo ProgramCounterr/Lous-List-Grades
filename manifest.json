@@ -1,9 +1,10 @@
 {
-    "manifest_version": 2,
+    "manifest_version": 3,
     "name": "Lou's List Grades",
     "version": "0.1", 
     "description": "View available grade data (from VA Grades) for classes on Lou's List",
-    "permissions": ["declarativeContent", "https://vagrades.com/"],
+    "permissions": ["declarativeContent"],
+    "host_permissions": ["https://vagrades.com/"],
     "content_scripts": [
         {
             "matches": [
@@ -14,10 +15,9 @@
         }
     ],
     "background": {
-        "scripts": ["scripts/background.js"],
-        "persistent": false
+        "service_worker": "background.js"
     },
-    "page_action": {
+    "action": {
         "default_popup": "popup.html",
         "default_icon": {
             "16": "icons/bar-chart16.png",
