@@ -1,16 +1,3 @@
-// setup popup functionality
-chrome.runtime.onInstalled.addListener(function() {
-    chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-      chrome.declarativeContent.onPageChanged.addRules([{
-        conditions: [new chrome.declarativeContent.PageStateMatcher({
-          pageUrl: {hostEquals: 'louslist.org'},
-        })
-        ],
-            actions: [new chrome.declarativeContent.ShowPageAction()]
-      }]);
-    });
-});
-
 // setup message handler for API call
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   let url = 'https://vagrades.com/api/uvaclass/' + encodeURIComponent(request.courseCode);

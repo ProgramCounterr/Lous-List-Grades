@@ -3,7 +3,6 @@
     "name": "Lou's List Grades",
     "version": "0.1", 
     "description": "View available grade data (from VA Grades) for classes on Lou's List",
-    "permissions": ["declarativeContent"],
     "host_permissions": ["https://vagrades.com/"],
     "content_scripts": [
         {
@@ -18,7 +17,6 @@
         "service_worker": "background.js"
     },
     "action": {
-        "default_popup": "popup.html",
         "default_icon": {
             "16": "icons/bar-chart16.png",
             "24": "icons/bar-chart24.png",
