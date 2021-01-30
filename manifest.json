@@ -7,7 +7,9 @@
     "content_scripts": [
         {
             "matches": [
-                "*://louslist.org/page.php?Semester=*&Type=Group&Group=*"
+                "*://louslist.org/page.php?Semester=*&Type=Group&Group=*", 
+                "*://louslist.org/page.php?Semester=*&Type=Search",
+                "*://louslist.org/CC/*"
             ],
             "css": ["style.css"],
             "js": ["libraries/Chart.js", "scripts/makeChart.js", "scripts/content.js"]

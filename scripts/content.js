@@ -6,13 +6,20 @@ for(courseNameElement of courseNameElements) {
     showGradesButton.classList.add('show-grades');
     showGradesButton.textContent = "Show Grades";
 
-    showGradesButton.addEventListener('click', (e) => {
-        // get course code without any whitespace (e.g. 'CS1110')
-        let courseCode = (e.target).parentElement
-            .previousElementSibling.textContent.replace(' ', '').trim();
-        const rowElement = (e.target).parentElement.parentElement // course row (that contains courseNum and courseName elements)
-            .nextElementSibling.nextElementSibling;
-        
+    // get course code without any whitespace (e.g. 'CS1110')
+    const courseCode = courseNameElement.previousElementSibling.textContent.replace(' ', '').trim();
+    let rowElement = null;
+    if(courseNameElement.parentElement.nextElementSibling.className.includes('SectionStart'))
+        // get empty row element (only present in pages with class sections shown)
+        rowElement = courseNameElement.parentElement.nextElementSibling.nextElementSibling;
+    else { // Course Catalog (CC) page
+        rowElement = document.createElement('tr');
+        rowElement.classList.add('CourseCatalogGrades');
+        // append as sibling after the row element containing the courseName and courseNum
+        courseNameElement.parentElement.insertAdjacentElement('afterend', rowElement); 
+    }
+
+    showGradesButton.addEventListener('click', (e) => {        
         if(showGradesButton.textContent === "Show Grades") {
             showGradesButton.textContent = "Hide Grades";
             rowElement.style.display = "table-row"; // show rowElement
@@ -71,7 +78,8 @@ for(courseNameElement of courseNameElements) {
     
                             // create the select element next to the chart container
                             const selectContainerElement = document.createElement('td');
-                            selectContainerElement.setAttribute('colspan', '4');
+                            if(!rowElement.className.includes('CourseCatalogGrades')) // style different for CC page
+                                selectContainerElement.setAttribute('colspan', '4');
                             const selectElement = document.createElement('select');
                             selectElement.classList.add('section-picker');
                             for(let section of course.sections) {
